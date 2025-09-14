@@ -1,9 +1,9 @@
-import HomeComponents from "@/components/home";
+import ProductsComponent from "@/components/products";
 
 const HomePage = async () => {
   return (
     <>
-      <HomeComponents />
+      <ProductsComponent />
     </>
   );
 };
