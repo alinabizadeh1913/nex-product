@@ -19,24 +19,13 @@ interface categoryType {
   id: number;
   title: string;
 }
+
 const ProductsComponent = () => {
   const [categories, setCategories] = useState<categoryType[]>([
-    {
-      id: 1,
-      title: "Art",
-    },
-    {
-      id: 2,
-      title: "Music",
-    },
-    {
-      id: 3,
-      title: "Collectibles",
-    },
-    {
-      id: 4,
-      title: "Sport",
-    },
+    { id: 1, title: "Art" },
+    { id: 2, title: "Music" },
+    { id: 3, title: "Collectibles" },
+    { id: 4, title: "Sport" },
   ]);
 
   const { sidebarOpen } = useSidebarStore();
@@ -67,6 +56,31 @@ const ProductsComponent = () => {
       document.documentElement.classList.add("dark");
     }
   }, []);
+
+  // ---------------- Pagination ----------------
+  const allProducts = Array.from({ length: 35 }).map((_, index) => ({
+    id: index,
+    title: "Abstract Colors",
+    date: "05/12",
+    category: "Art",
+    description:
+      "Lorem ipsum dolor sit amet consectetur adipisicing elit. Assumenda, omnis modi officiis saepe similique atque nesciunt vel fugiat.",
+    price: 300,
+    image: "/images/image.png",
+  }));
+
+  const [currentPage, setCurrentPage] = useState(1);
+  const productsPerPage = 8;
+
+  const totalPages = Math.ceil(allProducts.length / productsPerPage);
+
+  const indexOfLast = currentPage * productsPerPage;
+  const indexOfFirst = indexOfLast - productsPerPage;
+  const currentProducts = allProducts.slice(indexOfFirst, indexOfLast);
+
+  const goToPage = (page: number) => {
+    if (page >= 1 && page <= totalPages) setCurrentPage(page);
+  };
 
   return (
     <>
@@ -120,7 +134,6 @@ const ProductsComponent = () => {
                         <ListIcon />
                       </div>
                     </div>
-
                     <div
                       className="w-[40px] h-[40px] rounded-full bg-[#fff] dark:bg-[#113C44] flex justify-center items-center cursor-pointer"
                       onClick={changeTheme}
@@ -153,39 +166,35 @@ const ProductsComponent = () => {
                       sidebarOpen ? "grid-cols-4" : "grid-cols-5"
                     }`}
                   >
-                    {Array.from({ length: 23 }).map((_, index) => (
+                    {currentProducts.map((product) => (
                       <div
                         className="p-[15px] rounded-[10px] bg-[#fff] dark:bg-[#113C44]"
-                        key={index}
+                        key={product.id}
                       >
                         <div className="relative w-full h-[150px] rounded-[10px] overflow-hidden">
-                          <Image src={`/images/image.png`} alt={`img`} fill />
+                          <Image src={product.image} alt={`img`} fill />
                         </div>
                         <div className="mt-3 flex justify-between items-center">
                           <Typography className="text-[#316e8d] dark:text-[#fff] font-[600]">
-                            Abstract Colors
+                            {product.title}
                           </Typography>
                           <Typography className="text-[#316e8d] dark:text-[#fff] text-sm">
-                            05/12
+                            {product.date}
                           </Typography>
                         </div>
                         <div className="category">
                           <Typography className="text-[#2b565e] dark:text-[#7CCFDE] text-sm">
-                            Art
+                            {product.category}
                           </Typography>
                         </div>
                         <div className="description">
                           <Typography className="text-[#316e8d] dark:text-[#fff] line-clamp-2 text-sm">
-                            Lorem ipsum dolor sit amet consectetur adipisicing
-                            elit. Assumenda, omnis modi officiis saepe similique
-                            atque nesciunt vel fugiat, ipsam iusto ea nostrum
-                            perferendis officia aperiam molestias possimus harum
-                            veritatis provident.
+                            {product.description}
                           </Typography>
                         </div>
                         <div className="mt-3 flex justify-between items-center">
                           <Typography className="text-[#316e8d] dark:text-[#fff] font-[600] text-sm">
-                            Price : 300 $
+                            Price : {product.price} $
                           </Typography>
                           <button className="bg-[#248597] h-[32px] rounded-full px-5">
                             <Typography className="text-[#fff] text-sm">
@@ -199,33 +208,61 @@ const ProductsComponent = () => {
                 </div>
                 <div className="mt-20 w-full flex justify-center">
                   <div className="flex gap-x-4">
-                    <div className="w-[36px] h-[36px] rounded-full border-[2px] border-[#248597] hover:bg-[#248597] duration-300 group flex justify-center items-center select-none cursor-pointer">
-                      <Typography className="text-[#316e8d] dark:text-[#fff] group-hover:text-white">
+                    <div
+                      onClick={() => goToPage(currentPage - 1)}
+                      className={`w-[36px] h-[36px] rounded-full border-[2px] flex justify-center items-center select-none ${
+                        currentPage === 1
+                          ? "border-gray-400 text-gray-400 cursor-default"
+                          : "border-[#248597] hover:bg-[#248597] cursor-pointer group"
+                      } duration-300`}
+                    >
+                      <Typography
+                        className={`${
+                          currentPage === 1
+                            ? "text-gray-400"
+                            : "text-[#316e8d] dark:text-[#fff] group-hover:text-white"
+                        }`}
+                      >
                         <LeftIcon />
                       </Typography>
                     </div>
-                    <div className="w-[36px] h-[36px] rounded-full border-[2px] border-[#248597] hover:bg-[#248597] duration-300 group flex justify-center items-center select-none cursor-pointer">
-                      <Typography className="text-[#316e8d] dark:text-[#fff] group-hover:text-white">
-                        2
-                      </Typography>
-                    </div>
-                    <div className="w-[36px] h-[36px] rounded-full border-[2px] border-[#248597] hover:bg-[#248597] duration-300 group flex justify-center items-center select-none cursor-pointer">
-                      <Typography className="text-[#316e8d] dark:text-[#fff] group-hover:text-white">
-                        3
-                      </Typography>
-                    </div>
-                    <div className="w-[36px] h-[36px] rounded-full border-[2px] border-[#248597] hover:bg-[#248597] duration-300 group flex justify-center items-center select-none cursor-pointer">
-                      <Typography className="text-[#316e8d] dark:text-[#fff] group-hover:text-white">
-                        4
-                      </Typography>
-                    </div>
-                    <div className="w-[36px] h-[36px] rounded-full border-[2px] border-[#248597] hover:bg-[#248597] duration-300 group flex justify-center items-center select-none cursor-pointer">
-                      <Typography className="text-[#316e8d] dark:text-[#fff] group-hover:text-white">
-                        5
-                      </Typography>
-                    </div>
-                    <div className="w-[36px] h-[36px] rounded-full border-[2px] border-[#248597] hover:bg-[#248597] duration-300 group flex justify-center items-center select-none cursor-pointer">
-                      <Typography className="text-[#316e8d] dark:text-[#fff] group-hover:text-white">
+                    {Array.from({ length: totalPages }).map((_, i) => (
+                      <div
+                        key={i}
+                        onClick={() => goToPage(i + 1)}
+                        className={`w-[36px] h-[36px] rounded-full border-[2px] flex justify-center items-center select-none cursor-pointer duration-300 ${
+                          currentPage === i + 1
+                            ? "bg-[#248597] border-[#248597]"
+                            : "border-[#248597] hover:bg-[#248597] group"
+                        }`}
+                      >
+                        <Typography
+                          className={`${
+                            currentPage === i + 1
+                              ? "text-white"
+                              : "text-[#316e8d] dark:text-[#fff] group-hover:text-white"
+                          }`}
+                        >
+                          {i + 1}
+                        </Typography>
+                      </div>
+                    ))}
+
+                    <div
+                      onClick={() => goToPage(currentPage + 1)}
+                      className={`w-[36px] h-[36px] rounded-full border-[2px] flex justify-center items-center select-none ${
+                        currentPage === totalPages
+                          ? "border-gray-400 text-gray-400 cursor-default"
+                          : "border-[#248597] hover:bg-[#248597] cursor-pointer group"
+                      } duration-300`}
+                    >
+                      <Typography
+                        className={`${
+                          currentPage === totalPages
+                            ? "text-gray-400"
+                            : "text-[#316e8d] dark:text-[#fff] group-hover:text-white"
+                        }`}
+                      >
                         <RightIcon />
                       </Typography>
                     </div>
